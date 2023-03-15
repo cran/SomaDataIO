@@ -1,0 +1,96 @@
+---
+title: "Introduction to SomaDataIO"
+output: rmarkdown::html_vignette
+vignette: >
+  %\VignetteIndexEntry{Introduction to SomaDataIO}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+```{r setup, include = FALSE}
+library(SomaDataIO)
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+
+
+This document accompanies the `SomaDataIO` R package, which loads
+and exports 'SomaScan' data via the SomaLogic Operating Co., Inc.
+proprietary text file called an ADAT (`*.adat`).
+For file format see [here](https://github.com/SomaLogic/SomaLogic-Data/blob/master/README.md).
+The package also exports auxiliary functions for manipulating, wrangling,
+and extracting relevant information from an ADAT object once in memory.
+Basic familiarity with the R environment is assumed, as is the ability to install
+contributed packages from the Comprehensive R Archive Network (CRAN).
+
+
+
+-------------------
+
+
+## Main Features (I/O)
+
+* Loading data (Import)
+    + parse and import a `*.adat` text file into an `R` session
+      as a `soma_adat` object.
+
+* Wrangling data (manipulation)
+    + subset, reorder, and list various fields of a `soma_adat` object.
+    + `?SeqId` analyte (feature) matching.
+    + `dplyr` and `tidyr` verb S3 methods for the `soma_adat` class.
+    + `?rownames` helpers that do not break `soma_adat` attributes.
+
+* Exporting data (Output)
+    + write out a `soma_adat` object as a `*.adat` text file.
+
+
+----------------------
+
+## Workflows and Analysis (TODO)
+This section will become more fleshed out in future versions of
+`SomaDataIO`
+
+#### In the meantime please see the package
+[README](https://github.com/SomaLogic/SomaDataIO/blob/main/README.md)
+
+
+---------------------
+
+## MIT LICENSE
+
+SomaDataIO™
+
+Copyright © 2023 SomaLogic Operating Co., Inc.
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of the SomaDataIO software and associated documentation files
+(the "Software"), to deal in the Software without restriction,
+including without limitation the rights to use, copy, modify, merge,
+publish, distribute, sub-license, and/or sell copies of the Software,
+and to permit persons to whom the Software is furnished to do so,
+subject to the following conditions outlined below.  Further,
+SomaDataIO and SomaLogic are trademarks owned by SomaLogic Operating Co., Inc.
+No license is hereby granted to these trademarks other than for purposes
+of identifying the origin or source of the Software.
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NON-INFRINGEMENT.
+IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDER(S) BE LIABLE FOR
+ANY CLAIM, DAMAGES, WHETHER DIRECT OR INDIRECT, OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS
+IN THE SOFTWARE.
+
+
+-----------------------------
+
+Created by [Rmarkdown](https://github.com/rstudio/rmarkdown)
+(v`r utils::packageVersion("rmarkdown")`) and `r R.version$version.string`.
+
