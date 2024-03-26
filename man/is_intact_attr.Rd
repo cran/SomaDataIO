@@ -12,15 +12,17 @@ is.intact.attributes(adat, verbose = interactive())
 \arguments{
 \item{adat}{A \code{soma_adat} object to query.}
 
-\item{verbose}{Logical. Should the function call be run in \emph{verbose}
-mode, printing relevant diagnostic call information to the console.}
+\item{verbose}{Logical. Should diagnostic information about failures
+be printed to the console? If the default, see \code{\link[=interactive]{interactive()}}, is invoked,
+only messages via direct calls are triggered. This prohibits messages
+generated deep in the call stack from bubbling up to the user.}
 }
 \value{
 Logical. \code{TRUE} if all checks pass, otherwise \code{FALSE}.
 }
 \description{
 This function runs a series of checks to determine
-if a \code{"soma_adat"} object has a complete
+if a \code{soma_adat} object has a complete
 set of attributes. If not, this indicates that the object has
 been modified since the initial \code{\link[=read_adat]{read_adat()}} call.
 Checks for the presence of both "Header.Meta" and "Col.Meta" in the
@@ -32,19 +34,18 @@ it also checks for the presence of the following entries:
 \item{"Col.Meta" section:}{"SeqId", "Target", "Units", and "Dilution"}
 }
 If any of the above they are altered or missing, \code{FALSE} is returned.
-}
-\section{Functions}{
-\itemize{
-\item \code{is.intact.attributes()}: has been superseded by a more convenient, current, tidy syntax.
 
-}}
+\code{\link[=is.intact.attributes]{is.intact.attributes()}} is \ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#superseded}{\figure{lifecycle-superseded.svg}{options: alt='[Superseded]'}}}{\strong{[Superseded]}}.
+It remains for backward compatibility and may be removed in the future.
+You are encouraged to shift your code to \code{\link[=is_intact_attr]{is_intact_attr()}}.
+}
 \examples{
 # checking attributes
 my_adat <- example_data
 is_intact_attr(my_adat)           # TRUE
 is_intact_attr(my_adat[, -303L])   # doesn't break atts; TRUE
 attributes(my_adat)$Col.Meta$Target <- NULL    # break attributes
-is_intact_attr(my_adat, verbose = TRUE)  # FALSE (Target missing)
+is_intact_attr(my_adat)  # FALSE (Target missing)
 }
 \seealso{
 \code{\link[=attributes]{attributes()}}

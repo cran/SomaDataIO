@@ -1,6 +1,6 @@
 ## ----setup, include = FALSE---------------------------------------------------
-library(SomaDataIO)
 knitr::opts_chunk$set(
+  echo = TRUE,
   collapse = TRUE,
   comment = "#>"
 )

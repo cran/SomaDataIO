@@ -2,64 +2,131 @@
 % Please edit documentation in R/lift-adat.R
 \name{lift_adat}
 \alias{lift_adat}
+\alias{is_lifted}
 \title{Lift an ADAT Between Assay Versions}
 \usage{
-lift_adat(adat, anno.tbl)
+lift_adat(
+  adat,
+  bridge = c("11k_to_7k", "11k_to_5k", "7k_to_11k", "7k_to_5k", "5k_to_11k", "5k_to_7k"),
+  anno.tbl = deprecated()
+)
+
+is_lifted(adat)
 }
 \arguments{
-\item{adat}{A \code{soma_adat} class object.}
+\item{adat}{A \code{soma_adat} object (with intact attributes),
+typically created using \code{\link[=read_adat]{read_adat()}}.}
 
-\item{anno.tbl}{A table of annotations, typically the result of a call
-to \code{\link[=read_annotations]{read_annotations()}}.}
+\item{bridge}{The direction of the lift (i.e. bridge).}
+
+\item{anno.tbl}{\ifelse{html}{\href{https://lifecycle.r-lib.org/articles/stages.html#deprecated}{\figure{lifecycle-deprecated.svg}{options: alt='[Deprecated]'}}}{\strong{[Deprecated]}}. Please now
+use the \code{bridge} argument.}
 }
 \value{
-A "lifted" \code{soma_adat} object corresponding to the scaling
-reference in the \code{anno.tbl}. RFU values are rounded to 1 decimal to
-match standard SomaScan delivery format.
+\code{\link[=lift_adat]{lift_adat()}}: A "lifted" \code{soma_adat} object corresponding to
+the scaling requested in the \code{bridge} parameter. RFU values are
+rounded to 1 decimal place to match standard SomaScan delivery format.
+
+\code{\link[=is_lifted]{is_lifted()}}: Logical. Whether the RFU values in a \code{soma_adat}
+have been lifted from its original signal space to a new signal space.
 }
 \description{
 The SomaScan platform continually improves its technical processes
-between assay versions; from changing reagents, liquid handling equipment,
-and increased analyte content. However, these upgrades can result in
-minute differences in RFU space for a given analyte, requiring a calibration
-(aka "lifting" or "bridging") to bring RFUs into a comparable space.
-This is accomplished by applying an analyte-specific scalar to each analyte
-RFU (ADAT column). The scalar values themselves are typically provided
-via \verb{*.xlsx} file, which can be parsed via \code{\link[=read_annotations]{read_annotations()}}. See Details.
+between assay versions. The primary change of interest is content expansion,
+and other protocol changes may be implemented including: changing reagents,
+liquid handling equipment, and well volumes.
+
+Table of SomaScan assay versions:
+
+\tabular{lcr}{
+\strong{Version}  \tab \strong{Commercial Name} \tab \strong{Size} \cr
+\code{V4}         \tab 5k                  \tab 5284     \cr
+\code{v4.1}       \tab 7k                  \tab 7596     \cr
+\code{v5.0}       \tab 11k                 \tab 11083    \cr
+}
+
+However, for a given analyte, these technical upgrades can result
+in minute measurement signal differences,
+requiring a calibration (aka "lifting" or "bridging") to bring RFUs into a
+comparable signal space.
+This is accomplished by applying an analyte-specific scalar,
+a linear transformation, to each analyte RFU measurement (column).
+If you have an annotations file (\verb{*.xlsx}) and wish to examine the
+bridging scalars themselves, please see \code{\link[=read_annotations]{read_annotations()}}.
+
+Lifting between SomaScan versions no longer requires an
+annotations file containing lifting scalars. We now enable users to pass
+a \code{bridge} parameter, indicating the direction of the bridge.
+For example, to "lift" between \verb{11k} -> \verb{7k}, you \emph{must} be acting on
+SomaScan data in \verb{11k} RFU space and would pass \code{bridge = "11k_to_7k"}.
+Likewise, \verb{7k} -> \verb{5k} requires \code{bridge = "7k_to_5k"}.
+Lastly, you may also lift directly from \verb{11k} -> \verb{5k}
+(aka "double-bridge") with \code{bridge = "11k_to_5k"}.
+See below for all options for the \code{bridge} argument.
 }
 \details{
-Lifting between various versions requires a specific
-annotations file containing scalars specific to desired lifting direction.
-For example, to "lift" between \code{v4.1} -> \code{v4.0}, you \emph{must} be working
-with SomaScan data in \code{v4.1} space and an annotations file containing
-scalars to convert \strong{to} \code{v4.0}.
-Likewise, "lifting" from \code{v4.0} -> \code{v4.1} requires
-a separate annotations file and a \code{soma_adat} from SomaScan \code{v4.0}.
+Matched samples across assay versions are used to calculate bridging
+scalars. For each analyte, this scalar is computed as the ratio of
+population \emph{medians} across assay versions.
+Please see the lifting vignette
+\code{vignette("lifting-and-bridging", package = "SomaDataIO")}
+for more details.
 }
+\section{Lin's CCC}{
+
+The Lin's Concordance Correlation Coefficient (CCC) is calculated
+by computing the correlation between post-lift RFU values and the
+RFU values generated on the original SomaScan version.
+This CCC estimate is a measure of how well an analyte can be bridged
+across SomaScan versions.
+See \code{vignette("lifting-and-bridging", package = "SomaDataIO")}.
+As with the lifting scalars, if you have an annotations file
+you may view the analyte-specific CCC values via \code{\link[=read_annotations]{read_annotations()}}.
+Alternatively, \code{\link[=getSomaScanLiftCCC]{getSomaScanLiftCCC()}} retrieves these values
+from an internal object for both \code{"serum"} and \code{"plasma"}.
+}
+
+\section{Analyte Setdiff}{
+
+\itemize{
+\item Newer versions of SomaScan typically have additional content, i.e.
+new reagents added to the multi-plex assay that bind to additional proteins.
+When lifting \emph{to} a previous SomaScan version, new reagents that do \emph{not}
+exist in the "earlier" assay version assay are scaled by 1.0, and thus
+maintained, unmodified in the returned object. Users may need to drop
+these columns in order to combine these data with a previous study
+from an earlier SomaScan version, e.g. with \code{\link[=collapseAdats]{collapseAdats()}}.
+\item In the inverse scenario, lifting "forward" \emph{from} a previous, lower-plex
+version, there will be extra reference values that are unnecessary
+to perform the lift, and a warning is triggered. The resulting data
+consists of RFU data in the "new" signal space, but with fewer analytes
+than would otherwise be expected (e.g. \verb{11k} space with only 5284
+analytes; see example below).
+}
+}
+
 \examples{
-# `example_data` is SomaScan V4
+# `example_data` is SomaScan (V4, 5k)
 adat <- head(example_data, 3L)
+dim(adat)
 
-# read in version specific annotations file
-# containing scaling values between assay versions
-\dontrun{
-tbl <- read_annotations("path/to/annotations_file.xlsx")
-}
+getSomaScanVersion(adat)
 
-# mock annotations table in lieu of `*.xlsx` file
-tbl <- tibble::tibble(SeqId = getSeqId(getAnalytes(adat)),
-                     "Plasma Scalar v4.0 to v4.1" = 1)   # scale by 1.0
-# usually performed inside `read_annotations()`
-# assign valid testing version to annotations table
-attr(tbl, "version") <- "SL-99999999-rev99-1999-01"
+getSignalSpace(adat)
 
-# perform the 'lifting'
-lifted <- lift_adat(adat, tbl)
+# perform 'lift'
+lift_11k <- lift_adat(adat, "5k_to_11k")  # warning
 
-# `tbl` contained all scalars = 1.0 (same RFUs)
-all.equal(adat, lifted, check.attributes = FALSE)
+is_lifted(lift_11k)
+
+dim(lift_11k)
 
 # attributes updated to reflect the 'lift'
-attr(lifted, "Header")$HEADER$ProcessSteps
-attr(lifted, "Header")$HEADER$SignalSpace
+attr(lift_11k, "Header")$HEADER$SignalSpace
+
+attr(lift_11k, "Header")$HEADER$ProcessSteps
+}
+\references{
+Lin, Lawrence I-Kuei. 1989. A Concordance Correlation
+Coefficient to Evaluate Reproducibility. \strong{Biometrics}. 45:255-268.
 }

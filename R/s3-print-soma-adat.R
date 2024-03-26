@@ -23,13 +23,27 @@ print.soma_adat <- function(x, show_header = FALSE, ...) {
   col_f       <- if ( attsTRUE ) cr_green else cr_red
   atts_symbol <- if ( attsTRUE ) symb_tick else symb_cross
   meta   <- getMeta(x)
+  ver    <- getSomaScanVersion(x) %||% "unknown"
+  ver    <- sprintf("%s (%s)", ver, slug_version(ver))
+  signal <- slug_version(getSignalSpace(x))
   n_apts <- getAnalytes(x, n = TRUE)
-  pad    <- strrep(" ", 5)
-  dim_vars <- paste0(pad, .pad(c("Attributes intact", "Rows", "Columns",
-                                 "Clinical Data", "Features"), 20))
-  dim_vals <- c(col_f(atts_symbol), nrow(x), ncol(x), length(meta), n_apts) |>
-    as.character() |>
-    cr_cyan()
+  pad    <- strrep(" ", 5L)
+  dim_vars <- c("SomaScan version", "Signal Space", "Attributes intact", "Rows",
+                "Columns", "Clinical Data", "Features")
+  dim_vals <- c(ver, signal, col_f(atts_symbol), nrow(x), ncol(x),
+                length(meta), n_apts)
+  if ( inherits(x, "grouped_df") && !is.null(attr(x, "groups")) ) {
+    dim_vars <- c(dim_vars, "Groups")
+    group_data <- attr(x, "groups")
+    dim_vals <- c(dim_vals,
+                  sprintf("%s [%s]",
+                          paste0(setdiff(names(group_data), ".rows"),
+                                 collapse = ", "),
+                          nrow(group_data)
+                  ))
+  }
+  dim_vars <- paste0(pad, .pad(dim_vars, 20L))
+  dim_vals <- cr_cyan(dim_vals)
   writeLines(paste(dim_vars, dim_vals))
 
   if ( attsTRUE ) {
@@ -72,4 +86,11 @@ print.soma_adat <- function(x, show_header = FALSE, ...) {
 
   writeLines(cli_rule(line = 2, line_col = "green"))
   invisible(x)
+}
+
+# map internal version to
+# external commercial name
+slug_version <- function(x) {
+  ver <- x %||% "unknown"
+  map_ver2k[tolower(ver)]
 }

@@ -9,10 +9,9 @@
 #' (e.g. `seq.XXXX.XX`) become the `AptName` column of the lookup table and
 #' represents the key index between the table and `soma_adat` from which it comes.
 #'
-#' @param adat A `soma_adat` object (with intact attributes),
-#'   typically created using [read_adat()].
+#' @inheritParams params
 #' @return A `tibble` object with columns corresponding
-#' to the column meta data entries in the `soma_adat`. One row per analyte.
+#'   to the column meta data entries in the `soma_adat`. One row per analyte.
 #' @author Stu Field
 #' @seealso [getAnalytes()], [is_intact_attr()], [read_adat()]
 #' @examples
@@ -30,23 +29,18 @@
 #' # Rows of "Target" starting with MMP
 #' anno_tbl |>
 #'   dplyr::filter(grepl("^MMP", Target))
-#' @importFrom tibble tibble as_tibble
+#' @importFrom tibble tibble
 #' @export
 getAnalyteInfo <- function(adat) {
 
-  colmeta <- adat %@@% "Col.Meta"
-  stopifnot(!is.null(colmeta), inherits(colmeta, "tbl_df"))
-  colmeta <- dplyr::ungroup(colmeta)  # safety; previously a 'grouped_df'
+  colmeta <- attr(adat, "Col.Meta")
+  stopifnot(
+    "`Col.Meta` is absent from ADAT." = !is.null(colmeta),
+    "`Col.Meta` must be a `tbl_df`."  = inherits(colmeta, "tbl_df")
+  )
+  colmeta <- dplyr::ungroup(colmeta)  # for safety (previously a 'grouped_df')
   # AptName is the key index that links AnalyteInfo -> ADAT
   tbl <- tibble(AptName = getAnalytes(adat), SeqId = getSeqId(AptName, TRUE))
-
-  L <- range(lengths(colmeta, use.names = FALSE))
-  if ( diff(L) > .Machine$double.eps^0.5 ) {
-    # now that colmeta is `tbl_df` never enters this branch
-    warning("Unequal lengths in column meta data", call. = FALSE)
-    .jagged <- function(x) as_tibble(lapply(x, "length<-", max(lengths(x))))
-    colmeta <- .jagged(colmeta)
-  }
 
   if ( nrow(tbl) != nrow(colmeta) ) {
     warning(

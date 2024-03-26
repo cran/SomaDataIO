@@ -20,8 +20,12 @@ test_that("`soma_adat` S3 print method returns known output", {
   # show_header is TRUE
   expect_snapshot_output(print(adat, show_header = TRUE))
 
+  # grouped_df
+  grouped_adat <- dplyr::group_by(adat, SampleType)
+  expect_snapshot_output(grouped_adat)
+
   # break atts
-  attributes(adat)$Header.Meta <- NULL
-  expect_false(is_intact_attr(adat))
+  attr(adat, "Header.Meta") <- NULL
+  expect_false(is_intact_attr(adat, verbose = FALSE))
   expect_snapshot_output(adat)
 })

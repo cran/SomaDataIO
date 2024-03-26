@@ -21,8 +21,7 @@
 #' }
 #'
 #' @family IO
-#' @param x An object of class `soma_adat`.
-#'   Both [is.soma_adat()] and [is_intact_attr()] must be `TRUE`.
+#' @inheritParams params
 #' @param file Character. File path where the object should be written.
 #'   For example, extensions should be `*.adat`.
 #' @return Invisibly returns the input `x`.
@@ -121,12 +120,24 @@ write_adat <- function(x, file) {
     df$blank_col <- NA_character_
     df <- df[, c(meta_names, "blank_col", apts)]
 
-    # write meta & feature data to file
-    df[, apts] <- apply(df[, apts], 2, function(.x) sprintf("%0.1f", .x))
+    # guard against `apts` of length 1
+    rfuvals <- as.matrix(df[, apts], rownames.force = FALSE)
+    # convert analytes to 1 dp
+    df[, apts] <- sprintf("%0.1f", rfuvals)  # vectorized
 
-    write.table(x = df, file = f, na = "", sep = "\t", append = TRUE,
-                row.names = FALSE, col.names = FALSE, eol = "\n",
-                quote = FALSE, fileEncoding = "UTF-8")
+    # write meta & feature data to file
+    write.table(
+      x            = df,
+      file         = f,
+      na           = "",
+      sep          = "\t",
+      append       = TRUE,
+      row.names    = FALSE,
+      col.names    = FALSE,
+      eol          = "\n",
+      quote        = FALSE,
+      fileEncoding = "UTF-8"
+    )
   }
   .done("ADAT written to: {.value(file)}")
   invisible(x)
@@ -134,7 +145,6 @@ write_adat <- function(x, file) {
 
 
 # Check ADAT prior to Writing
-# @param adat A `soma_adat` class object.
 .checkADAT <- function(adat) {
   atts <- attributes(adat)
   apts <- getAnalytes(adat)

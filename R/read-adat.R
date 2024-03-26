@@ -23,9 +23,13 @@
 #' @author Stu Field
 #' @seealso [read.delim()]
 #' @examples
-#' f <- system.file("extdata", "example_data10.adat",
-#'                  package = "SomaDataIO", mustWork = TRUE)
-#' my_adat <- read_adat(f)
+#' # path to *.adat file
+#' # replace with your file path
+#' adat_path <- system.file("extdata", "example_data10.adat",
+#'                          package = "SomaDataIO", mustWork = TRUE)
+#' adat_path
+#'
+#' my_adat <- read_adat(adat_path)
 #'
 #' is.soma_adat(my_adat)
 #' @importFrom stats setNames
@@ -126,10 +130,9 @@ read_adat <- function(file, debug = FALSE, verbose = getOption("verbose"), ...) 
 
 #' Alias to `read.adat`
 #'
-#' [read.adat()] is a convenient backward compatibility alias for
-#' [read_adat()] to enable use of older versions of `SomaDataIO`. It will likely
-#' never go away completely, but you strongly encouraged to shift your code
-#' to use [read_adat()].
+#' [read.adat()] is `r lifecycle::badge("superseded")`.
+#' For backward compatibility it will likely never go away completely,
+#' but you are strongly encouraged to shift your code to use [read_adat()].
 #'
 #' @rdname read_adat
 #' @importFrom lifecycle deprecate_soft
