@@ -9,7 +9,7 @@ read_annotations(file)
 \arguments{
 \item{file}{A path to an annotations file location.
 This is a sanctioned, versioned file provided by
-SomaLogic Operating Co., Inc. and should be an \emph{unmodified}
+Standard BioTools, Inc. and should be an \emph{unmodified}
 \verb{*.xlsx} file.}
 }
 \value{
@@ -23,7 +23,7 @@ Import a SomaLogic Annotations File
 \examples{
 \dontrun{
   # for example
-  file <- "~/Desktop/SomaScan_V4.1_7K_Annotated_Content_20210616.xlsx"
+  file <- "~/Downloads/SomaScan_11K_Annotated_Content.xlsx"
   anno_tbl <- read_annotations(file)
 }
 }

@@ -20,7 +20,7 @@
 #' @return A Bioconductor object of class `ExpressionSet`.
 #' @author Stu Field
 #' @references \url{https://bioconductor.org/install/}
-#' @examples
+#' @examplesIf rlang::is_installed("Biobase")
 #' eSet <- adat2eSet(example_data)
 #' class(eSet)
 #' eSet
@@ -32,10 +32,12 @@
 adat2eSet <- function(adat) {
 
   if ( !requireNamespace("Biobase", quietly = TRUE) ) {
+    # nocov start
     stop(
       "The `Biobase` package is required to use this function.\n",
       "See ?adat2eSet for installation instructions.", call. = FALSE
     )
+    # nocov end
   }
 
   stopifnot("`adat` must have intact attributes." = is_intact_attr(adat))
@@ -62,10 +64,10 @@ adat2eSet <- function(adat) {
 
   experimentData       <- Biobase::experimentData(eset)
   experimentData@name  <- if ("AssayType" %in% names(lst$header)) lst$header$AssayType else ""
-  experimentData@lab   <- "SomaLogic Operating Co., Inc."
+  experimentData@lab   <- "Standard BioTools, Inc."
   experimentData@contact <- "2945 Wilderness Place, Boulder, Colorado, 80301."
   experimentData@title <- if ("Title" %in% names(lst$header)) lst$header$Title else ""
-  experimentData@url   <- "www.somalogic.com"
+  experimentData@url   <- "www.standardbio.com"
   experimentData@other <- c(list(R.version  = R.version$version.string,
                                  R.platform = R.version$platform,
                                  R.arch     = R.version$arch),

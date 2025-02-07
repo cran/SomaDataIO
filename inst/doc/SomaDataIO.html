@@ -240,9 +240,9 @@ code > span.er { color: #a61717; background-color: #e3d2d2; }
 
 
 <p>This document accompanies the <code>SomaDataIO</code> R package,
-which loads and exports ‘SomaScan’ data via the SomaLogic Operating Co.,
-Inc. structured text file called an ADAT (<code>*.adat</code>). For file
-format see <a href="https://github.com/SomaLogic/SomaLogic-Data/blob/master/README.md">here</a>.
+which loads and exports ‘SomaScan’ data via the Standard BioTools, Inc.
+structured text file called an ADAT (<code>*.adat</code>). For file
+format see <a href="https://github.com/SomaLogic/SomaLogic-Data/blob/main/README.md">here</a>.
 The package also exports auxiliary functions for manipulating,
 wrangling, and extracting relevant information from an ADAT object once
 in memory. Basic familiarity with the R environment is assumed, as is
@@ -266,8 +266,8 @@ object.</li>
 <code>soma_adat</code> class.</li>
 <li><code>?rownames</code> helpers that do not break
 <code>soma_adat</code> attributes.</li>
-<li>please see vignette
-<code>vignette(&quot;tips-loading-and-wrangling&quot;, package = &quot;SomaDataIO&quot;)</code></li>
+<li>please see the article <a href="https://somalogic.github.io/SomaDataIO/articles/tips-loading-and-wrangling.html">Loading
+and Wrangling ‘SomaScan’</a></li>
 </ul></li>
 <li>Exporting data (Output)
 <ul>
@@ -288,34 +288,38 @@ typical primary statistical analyses that are commonly performed on
 <em>t</em>-test
 <ul>
 <li>see <code>stats::t.test()</code></li>
-<li>see vignette
-<code>vignette(&quot;stat-two-group-comparison&quot;, package = &quot;SomaDataIO&quot;)</code></li>
+<li>see workflow: <a href="https://somalogic.github.io/SomaDataIO/articles/stat-two-group-comparison.html">Two-Group
+Comparison</a></li>
 </ul></li>
 <li>Multi-group comparison (e.g. differential expression) via ANOVA
 <ul>
 <li>see <code>stats::aov()</code></li>
-<li>see vignette
-<code>vignette(&quot;stat-three-group-analysis-anova&quot;, package = &quot;SomaDataIO&quot;)</code></li>
+<li>see workflow: <a href="https://somalogic.github.io/SomaDataIO/articles/stat-three-group-analysis-anova.html">ANOVA
+Three-Group Analysis</a></li>
 </ul></li>
 <li>Binary classification
 <ul>
 <li>see <code>stats::glm()</code></li>
-<li>see vignette
-<code>vignette(&quot;stat-binary-classification&quot;, package = &quot;SomaDataIO&quot;)</code></li>
+<li>see workflow: <a href="https://somalogic.github.io/SomaDataIO/articles/stat-binary-classification.html">Binary
+Classification</a></li>
 </ul></li>
 <li>Linear regression
 <ul>
 <li>see <code>stats::lm()</code></li>
-<li>see vignette
-<code>vignette(&quot;stat-linear-regression&quot;, package = &quot;SomaDataIO&quot;)</code></li>
+<li>see workflow: <a href="https://somalogic.github.io/SomaDataIO/articles/stat-linear-regression.html">Linear
+Regression</a></li>
 </ul></li>
 </ul>
+<p>Note that, in an effort to reduce package size and dependencies,
+these articles and workflows are only accessible via the
+<code>SomaDataIO</code> <code>pkgdown</code> website, and are not
+included with the installed package.</p>
 <hr />
 </div>
 <div id="mit-license" class="section level2">
 <h2>MIT LICENSE</h2>
 <p>SomaDataIO™</p>
-<p>Copyright © 2024 SomaLogic Operating Co., Inc.</p>
+<p>Copyright © 2025 Standard BioTools, Inc.</p>
 <p>Permission is hereby granted, free of charge, to any person obtaining
 a copy of the SomaDataIO software and associated documentation files
 (the “Software”), to deal in the Software without restriction, including
@@ -323,8 +327,8 @@ without limitation the rights to use, copy, modify, merge, publish,
 distribute, sub-license, and/or sell copies of the Software, and to
 permit persons to whom the Software is furnished to do so, subject to
 the following conditions outlined below. Further, SomaDataIO and
-SomaLogic are trademarks owned by SomaLogic Operating Co., Inc. No
-license is hereby granted to these trademarks other than for purposes of
+SomaLogic are trademarks owned by Standard BioTools, Inc. No license is
+hereby granted to these trademarks other than for purposes of
 identifying the origin or source of the Software.</p>
 <p>The above copyright notice and this permission notice shall be
 included in all copies or substantial portions of the Software.</p>

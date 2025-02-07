@@ -1,7 +1,7 @@
 #' Convert to Long Format
 #'
 #' Utility to convert an `ExpressionSet` class object
-#' from the "wide" data format to the "long" format via [pivot_longer()].
+#' from the "wide" data format to the "long" format via [tidyr::pivot_longer()].
 #' The \pkg{Biobase} package is required for this function.
 #'
 #' @family eSet
@@ -9,7 +9,7 @@
 #' @return A `tibble` consisting of the long format
 #'   conversion of an `ExpressionSet` object.
 #' @author Stu Field
-#' @examples
+#' @examplesIf rlang::is_installed("Biobase")
 #' # subset into a reduced mini-ADAT object
 #' # 10 samples (rows)
 #' # 5 clinical variables and 3 features (cols)
@@ -25,10 +25,12 @@
 pivotExpressionSet <- function(eSet) {
 
   if ( !requireNamespace("Biobase", quietly = TRUE) ) {
+    # nocov start
     stop(
       "The `Biobase` package is required to use this function.\n",
       "See ?adat2eSet for installation instructions.", call. = FALSE
     )
+    # nocov end
   }
 
   # samples (rows) x features (cols); move rn -> 1st column

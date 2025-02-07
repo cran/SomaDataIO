@@ -101,8 +101,8 @@ test_that("the `Ops()` group generic generates the expected output", {
   expect_equal((adat >= 2566.2)$seq.1234.56, c(FALSE, TRUE, TRUE, FALSE, FALSE, TRUE))
   expect_equal((adat <= 2566.2)$seq.1234.56, c(TRUE, FALSE, FALSE, TRUE, TRUE, TRUE))
 
-  expect_equal(sum(adat > 3000), 10)
-  expect_equal(sum(adat < 3000), 8)
+  expect_equal(sum(adat > 3000), 10L)
+  expect_equal(sum(adat < 3000), 8L)
 
   # meta  ata untouched
   ops <- adat + 10
@@ -177,4 +177,67 @@ test_that("the `Summary()` group generic generates the expected output", {
   expect_equal(max(adat), 4317.8)
   expect_equal(max(adat, 4906), 4906)
   expect_equal(max(adat, Inf), Inf)
+})
+
+test_that("error conditions generate the expected output for deprecated `soma.adat`", {
+  # old `soma.adat` class
+  adat2 <- structure(adat, class = c("soma.adat", "data.frame"))
+  catfile <- "msg.txt"
+  file.create(catfile)
+  expect_error(
+    capture.output(log10(adat2), file = catfile),
+    paste("`Math.soma.adat()` was deprecated in SomaDataIO (2019-01-31) and",
+          "is now defunct"),
+    fixed = TRUE
+  )
+  # test the `cat()` message
+  expect_snapshot(readLines(catfile))
+  unlink(catfile, force = TRUE)
+})
+
+test_that("error conditions are triggered for non-numerics in RFU block", {
+  tmp <- mock_adat()
+  tmp$seq.1234.56 <- "foo"
+
+  # Math
+  expect_error(
+    log10(tmp),
+    paste(
+      "Non-numeric variable(s) in `soma_adat` object where RFU values should be:",
+      "'seq.1234.56'"),
+    fixed = TRUE
+  )
+
+  # Summary
+  expect_warning(
+    out <- range(tmp),
+    paste(
+      "Non-numeric variable(s) detected in `soma_adat` object where",
+      "RFU values should be. Removing: 'seq.1234.56'"
+    ),
+    fixed = TRUE
+  )
+  expect_equal(out, c(2423.9, 4317.8))
+  # with bad non-adat expressions via '...'
+
+  expect_error(
+    range(adat, "a"),
+    "`range()` is only defined on a `soma_adat` with all numeric-alike variables",
+    fixed = TRUE
+  )
+  expect_error(
+    sum(adat, factor("a")),
+    "`sum()` is only defined on a `soma_adat` with all numeric-alike variables",
+    fixed = TRUE
+  )
+  expect_error(
+    max(adat, NULL),
+    "`max()` is only defined on a `soma_adat` with all numeric-alike variables",
+    fixed = TRUE
+  )
+  expect_error(
+    min(adat, list(a = 1)),
+    "`min()` is only defined on a `soma_adat` with all numeric-alike variables",
+    fixed = TRUE
+  )
 })

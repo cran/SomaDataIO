@@ -166,10 +166,23 @@ Summary.soma_adat <- function(..., na.rm = FALSE) {
   args <- lapply(list(...), function(x) {
     if ( is.soma_adat(x) ) {
       data.matrix(x[, getAnalytes(x)])
+      .apts <- getAnalytes(x)
+      rfu <- x[, .apts]
+      mode_ok <- vapply(rfu, function(.x) {
+        is.numeric(.x) || is.complex(.x) || is.logical(.x)
+      }, NA)
+      if ( !all(mode_ok) ) {
+        warning(
+          "Non-numeric variable(s) detected in `soma_adat` object ",
+          "where RFU values should be. Removing: ",
+          .value(names(rfu[, .apts])[!mode_ok]), ".", call. = FALSE
+        )
+      }
+      data.matrix(rfu[, mode_ok])
     } else if ( !is.numeric(x) && !is.logical(x) && !is.complex(x) ) {
-      stop(deparse(.Generic),
-        " is only defined on a `soma_adat` with all numeric-alike variables.",
-        call. = FALSE
+      stop("`", .Generic, "()`",
+         " is only defined on a `soma_adat` with all numeric-alike variables.",
+         call. = FALSE
       )
     } else {
       x
@@ -197,11 +210,11 @@ Summary.soma_adat <- function(..., na.rm = FALSE) {
 #' @export
 Math.soma.adat <- function(x, ...) {
   .msg <- paste(
-    "The", .value("soma.adat"), "class is now", .value("soma_adat"),
-    "\nPlease either:\n",
+    "The", .value("soma.adat"), "class is now", .value("soma_adat"), ".\n",
+    "Please either:\n",
     "  1) Re-class with x <- addClass(x, 'soma_adat')\n",
     "  2) Re-call 'x <- read_adat(file)' to pick up the new 'soma_adat' class.\n"
   )
   cat(.msg)
-  deprecate_stop("2019-01-31", "SomaDataIO::Math.soma.adat()")
+  deprecate_stop("(2019-01-31)", "SomaDataIO::Math.soma.adat()")
 }

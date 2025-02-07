@@ -1,17 +1,21 @@
 
-suppressPackageStartupMessages(library(Biobase))
+if ( rlang::is_installed("Biobase") ) {
+  suppressPackageStartupMessages(library(Biobase))
+  sub_adat <- example_data[1:10L, c(1:5L, 35:37L)]
+}
 
-sub_adat <- example_data[1:10L, c(1:5L, 35:37L)]
+
 
 test_that("`adat2eSet()` converts `soma_adt` -> eSet correctly", {
+  testthat::skip_if_not_installed("Biobase")
   eSet <- adat2eSet(sub_adat)
   expect_s4_class(eSet, "ExpressionSet")
   expect_true(is.matrix(eSet@assayData$exprs))
   expect_equal(dim(eSet@assayData$exprs), c(3L, 10L))
   expect_type(eSet@experimentData@other, "list")
-  expect_equal(eSet@experimentData@url, "www.somalogic.com")
+  expect_equal(eSet@experimentData@url, "www.standardbio.com")
   expect_equal(eSet@experimentData@title, "Example Adat Set001, Example Adat Set002")
-  expect_equal(eSet@experimentData@lab, "SomaLogic Operating Co., Inc.")
+  expect_equal(eSet@experimentData@lab, "Standard BioTools, Inc.")
   expect_equal(eSet@experimentData@other$Version, "1.2")
   expect_equal(eSet@experimentData@other$ExpDate, "2020-06-18, 2020-07-20")
   expect_equal(eSet@experimentData@other$AssaySite, "SW")
