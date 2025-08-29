@@ -1,7 +1,7 @@
 Type: Package
 Package: SomaDataIO
 Title: Input/Output 'SomaScan' Data
-Version: 6.3.0
+Version: 6.4.0
 Authors@R: c(
     person(given = "Stu",
            family = "Field",
@@ -41,10 +41,10 @@ Config/testthat/edition: 3
 Config/Needs/website: tidyverse/tidytemplate
 RoxygenNote: 7.3.2
 NeedsCompilation: no
-Packaged: 2025-05-06 16:42:05 UTC; cscheidel
+Packaged: 2025-08-29 20:11:30 UTC; cscheidel
 Author: Stu Field [aut] (ORCID: <https://orcid.org/0000-0002-1024-5859>),
   Caleb Scheidel [cre],
   Standard BioTools, Inc. [cph, fnd]
 Maintainer: Caleb Scheidel <calebjscheidel@gmail.com>
 Repository: CRAN
-Date/Publication: 2025-05-06 17:00:02 UTC
+Date/Publication: 2025-08-29 20:30:02 UTC
